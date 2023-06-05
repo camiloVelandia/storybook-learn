@@ -1,0 +1,28 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.parseYarnLockV1Project = void 0;
+const _1 = require(".");
+const util_1 = require("../util");
+const build_depgraph_simple_pruned_1 = require("./build-depgraph-simple-pruned");
+const extract_yarnlock_v1_pkgs_1 = require("./extract-yarnlock-v1-pkgs");
+const parseYarnLockV1Project = async (pkgJsonContent, yarnLockContent, options) => {
+    const { includeDevDeps, includeOptionalDeps, includePeerDeps, pruneLevel, strictOutOfSync, } = options;
+    const pkgs = (0, extract_yarnlock_v1_pkgs_1.extractPkgsFromYarnLockV1)(yarnLockContent);
+    const pkgJson = (0, util_1.parsePkgJson)(pkgJsonContent);
+    const depGraph = pruneLevel === 'cycles'
+        ? await (0, build_depgraph_simple_pruned_1.buildDepGraphYarnLockV1SimpleCyclesPruned)(pkgs, pkgJson, {
+            includeDevDeps,
+            strictOutOfSync,
+            includeOptionalDeps,
+        })
+        : await (0, _1.buildDepGraphYarnLockV1Simple)(pkgs, pkgJson, {
+            includeDevDeps,
+            includeOptionalDeps,
+            includePeerDeps,
+            strictOutOfSync,
+            pruneWithinTopLevelDeps: pruneLevel === 'withinTopLevelDeps',
+        });
+    return depGraph;
+};
+exports.parseYarnLockV1Project = parseYarnLockV1Project;
+//# sourceMappingURL=simple.js.map
