@@ -10,7 +10,7 @@
 
 .button:hover{
   box-shadow: -4px 4px 0px var(--black);
-  transform: translate(4px);
+  transform: translate(5px);
   transition: .2s;
 }
 
